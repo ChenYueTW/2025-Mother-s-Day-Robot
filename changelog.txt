@@ -1,0 +1,248 @@
+v0.1
+- Planning 2025 Field
+- Add Apache commons math 3 library
+- GamePiece.java to select Reef Height
+- Upgrade swerve to 2025 version
+- Elevator coding
+
+v0.2
+- Updated WPILib to 2025.2.1
+- Updated ChoreoLib to 2025.0.1
+- Updated PathplannerLib to 2025.2.1
+- Updated Studica to 2025.0.0
+- Added Elastic Dashboard layout
+- Added AprilTag Field
+- Added ElevatorCommand.java
+- Added SwerveDriveCommand.java
+- Fixed TalonModule.java setReverse() method
+- Tested elevator mechanical
+- Removed Controller upLevelMode
+- Renamed ModeConstants.java to ModeSelector.java
+
+v0.2.1
+- Updated Phoenix6 to 25.2.0
+- Updated Studica to 2025.0.1
+- Added SysIdRoutine Logger
+- Added ElevatorFeedForward Controll System
+- Changed elevator Pid controller to ProfilePid controller
+
+v0.2.2
+- Imported Elastic.java to send notification to Elastic Dashboard
+- Imported ChoreoSettings
+- Imported AdvantageScope Settings
+- Imported PathPlanner Settings
+- Added IntakeLifterSubsystem.java (TEST)
+- Added IntakeSubsystem.java (TEST)
+- Added lib.subsystems.SubsystemBase.registerAlert() to alert mechanical boom
+- Added ModeSelector.lockIntake
+- Fixed SysIdRoutine caculate value is < 0 BUG
+
+v0.3
+- Planned controller button station and config bindings
+- Removed SparkModule.setGearRatio()
+- Added SysIdRoutine to test ElevatorFeedForward data
+- Added ElevatorFeedForward
+- Added ElevatorSim to simulation elevator (TODO)
+- Added ElevatorSubsystem.setVoltage() to controller elevator
+- Added ElevatorSubsystem.holdPosition() to prevent gravity fall
+- Added data record system to record some data, like position (TEST!) 
+- Added CarrageLifterSubsystem.java (TODO)
+- Added CarrageSubsystem.java (TODO)
+- Added PID on Shuffleboard function
+- Added IntakeLifterCmd.java
+- Added ContrllerButtonStation.java to get button and angle
+
+v0.4
+- Added source angle, autoIntake, lockCarrage, unlockCarrage button
+- Added InfaredHelper to sensor
+- Added MetalSensor to be mechanical safe
+- Added IntakeSubsystem Command function (ex. holdCoralCommand, pushCoarlCommand)
+- Added SwerveSubsystem.situateRobot() function to make robot go to vector
+- Optimize the repeated program of RobotContainer.configButttonStationBindings()
+    , and change it to function creation
+
+
+v0.4.1
+- Added LEDCommand.java
+- Added LEDModule to help build LEDSubsystem
+- Optimized LEDSubsystem
+
+v0.5
+- Added registerElevatorNamedCommands() to register L1~4 NamedCommands
+- Added registerMergeCommands() to register autoSource and autoPutCoral L1~44 NamedCommands
+- Added ElevatorSubsystem.holdToPosition() to moveTo positon and hold
+- Added ElevatorSubsystem.atSetpoint() to detect whether arrive current positiond
+- Added Led subsystem
+- Renamed CarriageLifterSubsystem
+- Renamed CarriageSubsystem
+- Adjustmented Robot period to 100Hz
+- Fixed Drive_gear_ratio mistake
+- Optimized SwerveTalon.java
+- Inital Choreo path
+- Merged LEDSubsystem.java
+
+v0.6
+- Added autoIntake() binding
+- Added CarriageLifterSubsystem PID on Shuffleboard system
+- Added CarriageLifterSubsystem dashboardMoveTo() to intput setpoint position
+- Added ElevatorSubsystem dashboardHoldTo() to input setpoint position and holdOn that
+- Added SwerveSubsystem.situateRobot() to track to designated coordinate
+- Changed CarrageLifterSubsystem getPositon function
+- Testedf CarrageLifterSubsystem.setVoltage()
+- Fixed CarriageSubsystem named mistake
+- Fixed CarrageLifterSubsystem feedbackVoltage name mistake
+- Fixed ElevatorSubsystem PID on Shuffleboard pid name mistake
+- Optimized ElevatorSubsystem Tolerance
+- Optimized Swerve turn PID
+- Inital IntakeSubsystem motor
+- Removed wait method before gyro reset
+
+v0.7
+- Added Test path
+- Added AutoModeSelector to selector path
+- Added CarriageLifterCmd.java
+- Added AutoHelper to help path generate
+- Added Elevator stop function
+- Optimized SwerveTalon settings
+- Fixed Carriage don't stop error
+- Fixed Elevator will not cancel when its rise is interrupted
+- Tested configCoralButtonStation() function
+- Tested configAlgaeButtonStation() function
+- Tested Choreo path but failed
+
+v0.8
+- Added SwerveSubsystem annotation
+- Added IntakeSubsystem annotation
+- Added IntakeLifterSubsystem annotation
+- Added CarriageSubsystem annotation
+- Added CarriageLifterSubsystem annotation
+- Added ElevatorSubsystem annotation
+- Added AutoModeSelector to select auto path
+- Tested all NamedCommands
+- Tested Reef L1~L3 and souce angle that is elevator and carriage lifter
+- Changed TriggerWithAngle.java angle to elevator angle and carriage lifter angle
+- Changed TODO list
+
+v0.9
+- Updated ChoreoLib to 2025.0.2
+- Updated PathplannerLib to 2025.2.2
+- Updated Phoenix6 to 25.2.1
+- Updated REVLib to 2025.0.2
+- Updated photonlib to 2025.1.1
+- Updated 2025_Field location
+- Added disabledPeriodic function to detect start location
+- Added FirstCoralLocationSelector
+- Added StartLocationSelector
+- Added DesiredModeSelector
+- Tested TrajectoryGenerator
+- Optimized AutoModeSelector
+- Installed AdvantageKit
+- Planned start location path and first coral location
+
+v1.0
+- AUTONOMOUS BIGGGGG Updated!
+- Added a lottttttt of path 
+- Added First Coral Selector
+- Added Second Coral Selector
+- Fixed Simulation robot function
+- Optimized AutoModeSelector
+
+v1.1
+- Added Base Mechanism model
+- Added Elevator Mechanism model
+- Added Intake Mechanism model
+- Added Carriage Mechanism model
+- Tested Mechanism Simulation
+- TODO: CarriageLifter.simulationPerodic() and IntakeLifter.simulationPerodic()
+    make CommandScheduler loop overrun
+- Optimized AprilTagPoseEstimator and PhotonHelper
+
+v1.2
+- Updated AUTONOMOUS !!!!!!!!!!!!!!!!!!!! (very gooooood)
+- Added Three Coral Auto
+- Added Four Coral Auto
+- Added abstract base to help select create
+- Tested Estimator
+- Added robot-3d.png
+
+v1.3
+- Added AprilTag_Field_Coordinate.png
+- Fixed Path Simulation when start location to reef and to source velocity mistake
+- Fixed PhotonHelper.getTargetString() error
+- Removed ModeSelector.java
+- Removed GamePiece.java
+
+v1.4
+- Removed RobotContainer get auto mode selector function
+- Fixed OneCoral and TwoCoral
+
+v1.5
+- Added ButtonStation
+- Renamed Level.java to LevelPosition.java
+- Changed LoggedRobot to TimedRobot
+- Changed selectorBase LoggedDashboardChooser to SendableChooser
+- Changed Desired mode selector LoggedDashboardChooser to SendableChooser
+- Fixed OneCoral, TwoCoral, ThreeCoral path bug
+- TODO: Simulation
+
+v1.6
+- Updated ChoreoLib to 2025.0.3
+- Updated PathplannerLib to 2025.2.3
+- Updated Phoenix6 to 25.2.2
+- Robot.addPeriodic() is very good
+- Added Test mode and path
+- Updated AdvantageScope model
+- Tested Elevator BETA version's ElevatorFeedForward and PID
+- Tested AprilTagPoseEstimator but failed
+- Tested Swerve Max speed and acceleration
+- Tested Mechanism simulation (no coral)
+- Tested Reef L2 and L3 elevator position and carriage lifter position
+
+v1.7
+- Tested ButtonStation to use autoPutCoral
+- Fixed RobotContainer.configCoralButtonStation() not safe bug
+- Fixed RobotContainer.configAlgaeButtonStation() not safe bug
+- Fixed Swerve Drive Gear ratio is 0 (And changed L1 to L3)
+
+v1.8
+- Added autoing mechanical but failed (TODO)
+- Added FunnelSubsystem
+- Fixed Gyro path mistake
+- Adjustmented LevelPosition elevator and lifter position
+- ...
+
+v1.9
+- Added CarriageLifter.holdToPosition
+- Adjustmented S1_CL path velocity and acceleration
+- Adjustmented OV9281 Camera pose
+- Annotation intake to prepare first simulation competition
+**TODO**
+Carriage Lifter SysId test
+Carriage Lifter TORLERENCE
+Autoing IR active test
+Autoing mechnical
+AprilTagPoseEstimator (Track TAG) 
+
+v2.0
+- Added Carriage lifter and elevator wpilog
+- Added Breake Axis for swerve
+- Added Robot mode for swerve
+- Added Reset gyro for swerve
+- Added AprilTagPose to get AprilTag rotation function
+- Tested Carriage Lifter SysId
+- Tested Carriage Lifter TORLERENCE
+
+v2.1
+- Added get and push reef algae button and command
+- Added track tag function
+- Tested Reef Algae elevator and lifter position
+- Optimized something
+
+v2.2 & v2.3
+- ...
+
+v2.9
+- Optimized some path to second simulation competition and limit velocity
+- Fixed Button Station bug
+- Addded Elastic select tab function
+- Prepared test path
