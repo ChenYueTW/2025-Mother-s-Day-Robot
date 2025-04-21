@@ -1,2 +1,2 @@
 # 2025-Robot
-Robot Code for the 2025 FRC season
+Robot Code for the 2025 NanShan High School Mother's Day
