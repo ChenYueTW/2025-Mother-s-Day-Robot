@@ -1,17 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LevelPosition.ElevatorLevel;
-import frc.robot.LevelPosition.Intake;
 import frc.robot.LevelPosition.LifterLevel;
 import frc.robot.commands.CarriageCmd;
 import frc.robot.commands.CarriageLifterCmd;
@@ -80,12 +73,12 @@ public class RobotContainer {
 		this.controllerButtonStation.pushCoral().onTrue(this.levelToSource());
 
 		// Auto Processor
-		this.controllerButtonStation.pushAlgae()
-			.onTrue(this.carriageSubsystem.pushAlgaeToProcessor()
-				.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
-					.alongWith(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
-						.raceWith(this.elevatorSubsystem.atSetpoint()
-							.andThen(this.goodFunnel())))));
+		// this.controllerButtonStation.pushAlgae()
+		// 	.onTrue(this.carriageSubsystem.pushAlgaeToProcessor()
+		// 		.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
+		// 			.alongWith(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
+		// 				.raceWith(this.elevatorSubsystem.atSetpoint()
+		// 					.andThen(this.goodFunnel())))));
 
 		// Funnel Recive Coral
 		this.controllerButtonStation.funnel()
@@ -213,7 +206,8 @@ public class RobotContainer {
 			.until(() -> this.carriageSubsystem.getIR())
 			.andThen(this.carriageSubsystem.unlockCarriage()
 				.withTimeout(1.0)
-				.alongWith(Commands.runOnce(() -> funneling = false)));
+				.alongWith(Commands.runOnce(() -> funneling = false))
+				.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.L2)));
 	}
 
 	public Command getAutonomousCommand() {
