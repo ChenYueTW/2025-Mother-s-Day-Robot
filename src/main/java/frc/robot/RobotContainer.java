@@ -73,12 +73,12 @@ public class RobotContainer {
 		this.controllerButtonStation.pushCoral().onTrue(this.levelToSource());
 
 		// Auto Processor
-		this.controllerButtonStation.pushAlgae()
-			.onTrue(this.carriageSubsystem.pushAlgaeToProcessor()
-				.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
-					.alongWith(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
-						.raceWith(this.elevatorSubsystem.atSetpoint()
-							.andThen(this.goodFunnel())))));
+		// this.controllerButtonStation.pushAlgae()
+		// 	.onTrue(this.carriageSubsystem.pushAlgaeToProcessor()
+		// 		.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
+		// 			.alongWith(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
+		// 				.raceWith(this.elevatorSubsystem.atSetpoint()
+		// 					.andThen(this.goodFunnel())))));
 
 		// Funnel Recive Coral
 		this.controllerButtonStation.funnel()
@@ -206,7 +206,8 @@ public class RobotContainer {
 			.until(() -> this.carriageSubsystem.getIR())
 			.andThen(this.carriageSubsystem.unlockCarriage()
 				.withTimeout(1.0)
-				.alongWith(Commands.runOnce(() -> funneling = false)));
+				.alongWith(Commands.runOnce(() -> funneling = false))
+				.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.L2)));
 	}
 
 	public Command getAutonomousCommand() {

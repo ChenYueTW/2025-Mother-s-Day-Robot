@@ -34,18 +34,4 @@ public class LevelPosition {
             return this.angle;
         }
     }
-
-    public enum Intake {
-        High(0), Low(0);
-
-        private final double angle;
-
-        Intake(double angle) {
-            this.angle = angle;
-        }
-
-        public double get() {
-            return this.angle;
-        }
-    }
 }
