@@ -76,9 +76,9 @@ public class CarriageSubsystem extends SubsystemBase {
     }
 
     public Command pushCoralToReefWithIR() {
-        return runEnd(() -> this.carriage.set(-0.3), this::stopModules)
+        return runEnd(() -> this.carriage.set(-0.4), this::stopModules)
             .until(() -> !this.getIR())
-            .andThen(new WaitCommand(0.5)); // TODO
+            .andThen(new WaitCommand(0.3)); // TODO
     }
 
     public Command getAlgaeFromReef() {

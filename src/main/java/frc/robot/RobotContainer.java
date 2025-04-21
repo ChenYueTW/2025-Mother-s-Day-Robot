@@ -1,8 +1,8 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LevelPosition.ElevatorLevel;
 import frc.robot.LevelPosition.LifterLevel;
@@ -37,10 +37,6 @@ public class RobotContainer {
 	// Mode
 	public static boolean pushingCoral = false;
 	public static boolean funneling = false;
-
-	public void resetOdmotry(Pose2d pose) {
-		this.swerveSubsystem.resetPose(pose);
-	}
 	
 	public RobotContainer() {
 		this.swerveSubsystem.setDefaultCommand(new SwerveDriveCmd(
@@ -72,13 +68,14 @@ public class RobotContainer {
 		this.configAlgaeButtonStation(this.controllerButtonStation.algaeLow(), ElevatorLevel.Low, LifterLevel.Low);
 		this.controllerButtonStation.pushCoral().onTrue(this.levelToSource());
 
-		// Auto Processor
-		// this.controllerButtonStation.pushAlgae()
-		// 	.onTrue(this.carriageSubsystem.pushAlgaeToProcessor()
-		// 		.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
-		// 			.alongWith(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
-		// 				.raceWith(this.elevatorSubsystem.atSetpoint()
-		// 					.andThen(this.goodFunnel())))));
+		// TODO Auto Processor
+		this.controllerButtonStation.pushAlgae()
+			.onTrue(Commands.sequence(
+				this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Processer)
+					.raceWith(this.elevatorSubsystem.atSetpoint()
+						.andThen(this.carriageSubsystem.pushAlgaeToProcessor())),
+				this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source)
+					.andThen(this.goodFunnel())));
 
 		// Funnel Recive Coral
 		this.controllerButtonStation.funnel()
@@ -114,8 +111,7 @@ public class RobotContainer {
 	// FINAL
 	public void configAlgaeButtonStation(Trigger button, ElevatorLevel elevatorLevel, LifterLevel lifterLevel) {
 		button
-			.onTrue(this.autoGetReefAlgae(elevatorLevel, lifterLevel))
-			.onFalse(this.autoGetReefAlgaeToProcessor());
+			.onTrue(this.autoGetReefAlgae(elevatorLevel, lifterLevel));
 	}
 
 	// TELE FIANL
@@ -147,24 +143,6 @@ public class RobotContainer {
 					.andThen(this.elevatorSubsystem.autoHoldToPosition(elevatorLevel)
 						.raceWith(this.elevatorSubsystem.atSetpoint()
 							.andThen(this.carriageSubsystem.pushCoralToReefWithIR())))),
-			this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
-				.raceWith(this.elevatorSubsystem.atSetpoint()
-					.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source))),
-			this.goodFunnel());
-	}
-
-	// AUTO FINAL
-	public Command autoLevelCoralToReef() {
-		return this.carriageLifterSubsystem.autoHoldToPosition(LifterLevel.L4)
-			.raceWith(this.carriageLifterSubsystem.atSetpoint()
-				.andThen(this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.L4)
-					.raceWith(this.elevatorSubsystem.atSetpoint()
-						.andThen(this.carriageSubsystem.pushCoralToReefWithIR()))));
-	}
-
-	// AUTO FINAL
-	public Command autoLevelCoralToSource() {
-		return Commands.sequence(
 			this.elevatorSubsystem.autoHoldToPosition(ElevatorLevel.Source)
 				.raceWith(this.elevatorSubsystem.atSetpoint()
 					.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.Source))),
@@ -207,7 +185,8 @@ public class RobotContainer {
 			.andThen(this.carriageSubsystem.unlockCarriage()
 				.withTimeout(1.0)
 				.alongWith(Commands.runOnce(() -> funneling = false))
-				.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.L2)));
+				.andThen(new WaitCommand(0.1)
+					.andThen(this.carriageLifterSubsystem.autoMoveToPosition(LifterLevel.L2))));
 	}
 
 	public Command getAutonomousCommand() {
