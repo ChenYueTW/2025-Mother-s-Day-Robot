@@ -1,27 +1,16 @@
 package frc.robot.lib.helpers;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.lib.math.AprilTagPoseEstimator;
-import frc.robot.subsystems.VisionSubsystem;
 
 public class PhotonHelper {
-    private final Transform3d robotToCam;
-    private final PhotonPoseEstimator poseEstimator;
     private final PhotonCamera photonCamera;
     private final AprilTagPoseEstimator aprilTagPoseEstimator;
 
@@ -31,13 +20,6 @@ public class PhotonHelper {
         this.photonCamera = new PhotonCamera(cameraName);
         this.aprilTagPoseEstimator = new AprilTagPoseEstimator(
             cameraPose, centralSight, xAxis, yAxis, torlerance, gyroAngle);
-        this.robotToCam = new Transform3d(new Translation3d(cameraPose.getX(), cameraPose.getY(), cameraPose.getZ()), new Rotation3d(VecBuilder.fill(1.0, 0.0, 0.0), VecBuilder.fill(centralSight.getZ(), -centralSight.getX(), centralSight.getY())));
-        this.poseEstimator = new PhotonPoseEstimator(VisionSubsystem.LAYOUT, PoseStrategy.AVERAGE_BEST_TARGETS, robotToCam);
-    }
-
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        this.poseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return this.poseEstimator.update(this.photonCamera.getLatestResult());
     }
 
     public PhotonTrackedTarget getTargetFromId(int id) {
