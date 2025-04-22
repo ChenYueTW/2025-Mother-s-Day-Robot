@@ -22,7 +22,7 @@ public class LevelPosition {
         L1(0), L2(0.032225485804851156),
         L3(0.032225485804851156), L4(0.022745185019294376),
         High(0.4649761835033076), Low(0.4908814687844542),
-        Source(0.0), Processer(0.4308880150909592);
+        Source(0.0), Processer(0.41511443116041896);
 
         private final double angle;
 

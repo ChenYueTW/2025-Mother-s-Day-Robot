@@ -278,8 +278,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         return new WaitUntilCommand(() -> this.lifterPid.atSetpoint());
     }
 
-    public Command atHalfSetpoint() {
-        return new WaitUntilCommand(() -> (Math.abs(this.lifterPid.getSetpoint() / 2.0 - this.getPosition()) < this.TOLERANCE));
+    public Command lifterCanMove() {
+        return new WaitUntilCommand(() -> (Math.abs(0.55950927734375 - this.getPosition()) < this.TOLERANCE));
     }
 
     public double getSetpoint() {
