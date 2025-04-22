@@ -62,7 +62,7 @@ public class CarriageSubsystem extends SubsystemBase {
      */
     public Command unlockCarriage() {
         return runEnd(this::execute, this::stopModules)
-            .withTimeout(0.1);
+            .withTimeout(0.07);
     }
 
     /**
