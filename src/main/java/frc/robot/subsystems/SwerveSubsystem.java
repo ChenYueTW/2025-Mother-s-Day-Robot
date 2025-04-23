@@ -8,6 +8,8 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import choreo.trajectory.SwerveSample;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +20,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -41,7 +45,6 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     private final SwerveModule backLeft;
     private final SwerveModule backRight;
     private final AHRS gyro;
-    private final SwerveDriveOdometry odometry;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field;
 
@@ -55,20 +58,7 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     private final PIDController steerPid = new PIDController(0.022, 0.0, 0.0);
     private final PIDController autoDrivePid = new PIDController(0.8, 0.0, 0.0);
 
-    // Simulation
-    private SwerveModuleState[] lastDesiredState = new SwerveModuleState[] {
-        new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()
-    };
-    private Pose2d simOdomotry;
-    private double timeFromLastUpdate = 0;
-	private double lastSimTime = Timer.getFPGATimestamp();
-    private double translateX = 0.0;
-    private double translateY = 0.0;
-    private double simAngle = 0.0;
-
     // Publishers for simulating and tracking swerve drive poses and module states
-    private final StructPublisher<Pose2d> swerveSim = NetworkTableInstance.getDefault()
-        .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
     private final StructArrayPublisher<SwerveModuleState> moduleSim = NetworkTableInstance.getDefault()
         .getStructArrayTopic("AdvantageScope/SwerveModule", SwerveModuleState.struct).publish();
     private final StructPublisher<Pose2d> swerveNow = NetworkTableInstance.getDefault()
@@ -101,13 +91,16 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
             "backRight"
         );
         this.gyro = new AHRS(NavXComType.kUSB1);
-        this.odometry = new SwerveDriveOdometry(
-            SwerveConstants.swerveDriveKinematics, this.getHeading(), this.getModulePosition()
-        );
         this.field = new Field2d();
-        this.simOdomotry = this.odometry.getPoseMeters();
+        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+        var visionStdDevs = VecBuilder.fill(1, 1, 1);
         this.poseEstimator = new SwerveDrivePoseEstimator(
-            SwerveConstants.swerveDriveKinematics, Rotation2d.fromDegrees(-this.getGyroAngle()), this.getModulePosition(), new Pose2d());
+            SwerveConstants.swerveDriveKinematics,
+            Rotation2d.fromDegrees(-this.getGyroAngle()),
+            this.getModulePosition(),
+            new Pose2d(),
+            stateStdDevs,
+            visionStdDevs);
         this.headingController.enableContinuousInput(-Math.PI, Math.PI);
         this.steerPid.enableContinuousInput(-180.0, 180.0);
         this.gyro.reset();
@@ -156,31 +149,13 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     }
 
     /**
-     * Updates the timer by calculating the time elapsed since the last update.
-     */
-    public void updateTimer() {
-        this.timeFromLastUpdate = Timer.getFPGATimestamp() - this.lastSimTime;
-		this.lastSimTime = Timer.getFPGATimestamp();
-    }
-
-    public void updateSimOdomotry() {
-        // SwerveModuleState[] states = this.getModuleStates();
-        // ChassisSpeeds speeds = SwerveConstants.swerveDriveKinematics.toChassisSpeeds(states);
-        
-    }
-
-    /**
      * Updates the timer, publishes the current swerve pose,
      * and updates odometry and pose estimator.
      */
     @Override
     public void periodic() {
-        this.updateTimer();
-        this.simOdomotry = new Pose2d(this.translateX, this.translateY, new Rotation2d(this.simAngle));
-        this.swerveSim.set(this.simOdomotry);
         this.field.setRobotPose(this.getPose());
         this.swerveNow.set(this.getPose());
-        this.odometry.update(this.getHeading(), this.getModulePosition());
         this.poseEstimator.update(this.getRotation(), this.getModulePosition());
     }
 
@@ -215,10 +190,6 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
         SwerveModuleState[] states = SwerveConstants.swerveDriveKinematics.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, 4.2);
         
-        this.translateX += (speeds.vxMetersPerSecond * this.timeFromLastUpdate);
-        this.translateY += (speeds.vyMetersPerSecond * this.timeFromLastUpdate);
-        this.simAngle += speeds.omegaRadiansPerSecond * this.timeFromLastUpdate;
-
         this.setModuleState(states);
     }
 
@@ -278,58 +249,11 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     }
 
     /**
-     * Method to drive the simulate robot using joystick info.
-     *
-     * @param xSpeed Speed of the robot in the x direction (forward).
-     * @param ySpeed Speed of the robot in the y direction (sideways).
-     * @param rot    Angular rate of the robot.
-     */
-    public void simSwerve(double xSpeed, double ySpeed, double rotation) {
-        SwerveModuleState[] states = SwerveConstants.swerveDriveKinematics.toSwerveModuleStates(
-            new ChassisSpeeds(xSpeed, ySpeed, rotation)
-        );
-        this.setModuleState(states);
-        this.moduleSim.set(states);
-
-        ChassisSpeeds speeds = SwerveConstants.swerveDriveKinematics.toChassisSpeeds(states);
-
-        if (speeds.vxMetersPerSecond != 0.0) {
-            this.translateX += speeds.vxMetersPerSecond * this.timeFromLastUpdate;
-        }
-        if (speeds.vyMetersPerSecond != 0.0) {
-            this.translateY += speeds.vyMetersPerSecond * this.timeFromLastUpdate;
-        }
-        if (speeds.omegaRadiansPerSecond != 0.0) {
-            this.simAngle += speeds.omegaRadiansPerSecond * this.timeFromLastUpdate;
-        }
-    }
-
-    /**
-     * Returns the current gyro rotation, using simulated values if in simulation mode.
-     * 
-     * @return The current gyro rotation as a Rotation2d.
-     */
-    // public Rotation2d getGyroRotation() {
-    //     if (Robot.isSimulation() && this.lastDesiredState != null) {
-    //         this.simAngle += SwerveConstants.swerveDriveKinematics
-    //             .toChassisSpeeds(this.lastDesiredState).omegaRadiansPerSecond * this.timeFromLastUpdate;
-            
-    //         this.simAngle = this.simAngle % (2 * Math.PI);
-    //         // SmartDashboard.putNumber("SimAngle", this.simAngle);
-
-    //         this.simAngle = (this.simAngle < 0) ? this.simAngle + (2 * Math.PI) : this.simAngle;
-	// 		return Rotation2d.fromRadians(this.simAngle);
-    //     }
-    //     return null;
-    // }
-
-    /**
      * Sets the swerve ModuleStates.
      *
      * @param desiredStates The desired SwerveModule states.
      */
     public void setModuleState(SwerveModuleState[] states) {
-        this.lastDesiredState = states;
         SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.MAX_SPEED);
         this.frontLeft.setDesiredState(states[0]);
         this.frontRight.setDesiredState(states[1]);
@@ -365,29 +289,21 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
         };
     }
 
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+        this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+    }
+
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+        this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
+    }
+
     /**
      * Returns the currently-estimated pose of the robot.
      *
      * @return The pose.
      */
     public Pose2d getPose() {
-        if (Robot.isReal()) {
-            Pose2d pose = this.odometry.getPoseMeters();
-            return pose;
-            // return new Pose2d(pose.getX(), pose.getY() - 0.15, pose.getRotation());
-        } else {
-            return this.simOdomotry;
-        }
-    }
-
-    public Pose2d getRobotToFieldPose(Translation2d robotToTagPose, Translation2d tagToFieldPose) {
-        robotToTagPose = robotToTagPose.rotateBy(this.getHeading());
-        Translation2d translation = tagToFieldPose.minus(robotToTagPose);
-        return new Pose2d(translation, this.getHeading());
-    }
-
-    public void resetPoseFromAprilTag(Pose2d pose) {
-        this.odometry.resetPose(pose);
+        return this.poseEstimator.getEstimatedPosition();
     }
 
     /**
@@ -396,19 +312,8 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
      * @param pose The pose to which to set the odometry.
      */
     public void resetPose(Pose2d pose) {
-        if (Robot.isReal()) {
-            // boolean isBlue = DriverStation.getAlliance().isPresent()
-            //     && DriverStation.getAlliance().get() == Alliance.Blue;
-            // double angleAdj = isBlue ? -pose.getRotation().getDegrees() : 180.0 - pose.getRotation().getDegrees();
-            // this.gyro.setAngleAdjustment(Math.IEEEremainder(angleAdj, 360.0));
-            this.gyro.reset();
-            this.odometry.resetPosition(this.getHeading(), this.getModulePosition(), pose);
-        } else {
-            this.simOdomotry = pose;
-            this.translateX = pose.getX();
-            this.translateY = pose.getY();
-            this.simAngle = pose.getRotation().getRadians();
-        }
+        this.gyro.reset();
+        this.poseEstimator.resetPosition(this.getHeading(), getModulePosition(), pose);
     }
 
     public boolean isGyroConnected() {
@@ -486,7 +391,6 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     public void putDashboard() {
         SmartDashboard.putString("SwervePose", this.getPose().toString());
         SmartDashboard.putData("Field", this.field);
-        SmartDashboard.putString("Sim SwervePose", this.simOdomotry.toString());
         SmartDashboard.putBoolean("Gyro Connect", this.isGyroConnected());
         SmartDashboard.putNumber("GyroAngle", this.getGyroAngle());
     }

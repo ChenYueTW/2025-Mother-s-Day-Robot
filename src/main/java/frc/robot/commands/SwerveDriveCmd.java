@@ -45,7 +45,7 @@ public class SwerveDriveCmd extends Command {
             Pose2d pose = this.visionSubsystem.getAprilTagFieldPoseFromLastUpdate();
 
             if (robotToTagPose != null && tagToFieldPose != null && (this.isTrackLeftTag.get() || this.isTrackRightTag.get())) {
-                this.swerveSubsystem.resetPoseFromAprilTag(this.swerveSubsystem.getRobotToFieldPose(robotToTagPose.getTranslation(), tagToFieldPose.getTranslation()));
+                // this.swerveSubsystem.resetPoseFromAprilTag(this.swerveSubsystem.getRobotToFieldPose(robotToTagPose.getTranslation(), tagToFieldPose.getTranslation()));
             }
 
             if (pose != null && (this.isTrackLeftTag.get() || this.isTrackRightTag.get() || this.aButton.get()) && !arrivedAtTag) {

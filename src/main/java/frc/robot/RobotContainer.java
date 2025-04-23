@@ -19,6 +19,7 @@ import frc.robot.subsystems.CarriageSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FunnelSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.RebuildVisionSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -32,6 +33,7 @@ public class RobotContainer {
 	public final CarriageLifterSubsystem carriageLifterSubsystem = new CarriageLifterSubsystem();
 	public final FunnelSubsystem funnelSubsystem = new FunnelSubsystem();
 	public final LEDSubsystem ledSubsystem = new LEDSubsystem();
+	private final RebuildVisionSubsystem rebuildVisionSubsystem = new RebuildVisionSubsystem(this.swerveSubsystem::addVisionMeasurement);
 	public final VisionSubsystem visionSubsystem = new VisionSubsystem(this.swerveSubsystem::getGyroAngle);
 
 	// Mode
