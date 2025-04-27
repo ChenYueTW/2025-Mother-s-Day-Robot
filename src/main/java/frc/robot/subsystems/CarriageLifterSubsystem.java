@@ -55,7 +55,7 @@ public class CarriageLifterSubsystem extends SubsystemBase {
      * and exposes PID parameters to SmartDashboard for real-time adjustments.
      */
     public CarriageLifterSubsystem() {
-        super("CarrageLifter");
+        super("CarrageLifter", false);
         this.registerAlert(this.lifter.isConnected());
         this.lifterPid.setTolerance(this.TOLERANCE);
 
@@ -284,4 +284,7 @@ public class CarriageLifterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("CarriageLifter/setpoint", this.lifterPid.getSetpoint());
         SmartDashboard.putBoolean("CarriageLifter/atSetpoint", this.lifterPid.atSetpoint());
     }
+
+    @Override
+    public void periodic() {}
 }

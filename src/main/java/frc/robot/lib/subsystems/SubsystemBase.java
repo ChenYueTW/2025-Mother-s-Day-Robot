@@ -3,37 +3,30 @@ package frc.robot.lib.subsystems;
 import java.io.FileWriter;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.helpers.Elastic;
 import frc.robot.lib.helpers.Elastic.Notification.NotificationLevel;
 import frc.robot.lib.helpers.IDashboardProvider;
+import frc.robot.lib.helpers.SubsystemProvider;
 
-public abstract class SubsystemBase extends edu.wpi.first.wpilibj2.command.SubsystemBase implements IDashboardProvider {
-    private final SendableChooser<Boolean> debugChooser = new SendableChooser<>();
+public abstract class SubsystemBase extends edu.wpi.first.wpilibj2.command.SubsystemBase implements IDashboardProvider, SubsystemProvider {
     private final String subsystemName;
     private boolean recordDataMode = false; 
-    private final boolean debug = false;
     private FileWriter fileWriter;
 
-    public SubsystemBase(String name) {
-        super(name);
+    public SubsystemBase(String name, boolean recordDataMode) {
         this.subsystemName = name;
+        this.recordDataMode = recordDataMode;
         this.registerDashboard();
         RobotProvider.registerSubsystems(this);
-        this.putDebugChooser();
     }
 
-    public void setRecordDataMode(boolean enable) {
-        this.recordDataMode = enable;
+    public void registerDataName(String fileName, String... strings) {
         try {
-            this.fileWriter = new FileWriter("/home/lvuser/dataRecord/" + this.subsystemName + "\n", true);
+            this.fileWriter = new FileWriter("/home/lvuser/dataRecord/" + this.subsystemName + "/" + fileName, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    public void registerDataName(String... strings) {
         if (this.fileWriter == null || this.recordDataMode) return;
         try {
             String joinedData = String.join(",", strings);
@@ -67,17 +60,9 @@ public abstract class SubsystemBase extends edu.wpi.first.wpilibj2.command.Subsy
         }
     }
 
-    public void putDebugChooser() {
-        if (!debug) return;
-        this.debugChooser.setDefaultOption("True", true);
-        this.debugChooser.addOption("False", false);
-        SmartDashboard.putData(this.getSubsystem(), this.debugChooser);
-    }
-
-    public boolean getChooser() {
-        return this.debugChooser.getSelected();
-    }
-
     @Override
     public abstract void putDashboard();
+
+    @Override
+    public abstract void periodic();
 }

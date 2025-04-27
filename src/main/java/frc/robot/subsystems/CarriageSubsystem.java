@@ -18,7 +18,7 @@ public class CarriageSubsystem extends SubsystemBase {
      * Initializes the subsystem and registers an alert to check if the carriage is connected.
      */
     public CarriageSubsystem() {
-        super("Carriage");
+        super("Carriage", false);
         this.registerAlert(this.carriage.isConnected());
     }
 
@@ -141,4 +141,7 @@ public class CarriageSubsystem extends SubsystemBase {
     public void putDashboard() {
         SmartDashboard.putBoolean("Carriage/IR", this.getIR());
     }
+
+    @Override
+    public void periodic() {}
 }

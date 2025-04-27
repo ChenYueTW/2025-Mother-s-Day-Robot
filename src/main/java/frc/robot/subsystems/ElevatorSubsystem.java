@@ -67,7 +67,7 @@ public class ElevatorSubsystem extends SubsystemBase {
      * The PID data is pushed to the Shuffleboard for visualization and debugging.
      */
     public ElevatorSubsystem() {
-        super("Elevator");
+        super("Elevator", false);
         this.registerAlert(this.left.isConnected(), this.right.isConnected());
         this.lifterPid.setTolerance(this.TOLERANCE);
 
@@ -394,4 +394,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator/setpoint", this.lifterPid.getSetpoint());
         SmartDashboard.putBoolean("Elevator/atSetpoint", this.lifterPid.atSetpoint());
     }
+
+    @Override
+    public void periodic() {}
 }

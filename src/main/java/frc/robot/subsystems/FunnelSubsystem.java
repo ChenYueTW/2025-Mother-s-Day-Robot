@@ -12,7 +12,7 @@ public class FunnelSubsystem extends SubsystemBase {
     private final double FUNNEL_SPEED = 0.0;
 
     public FunnelSubsystem() {
-        super("Funnel");
+        super("Funnel", false);
     }
 
     public void execute() {
@@ -51,7 +51,8 @@ public class FunnelSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void putDashboard() {
-        
-    }
+    public void putDashboard() {}
+
+    @Override
+    public void periodic() {}
 }

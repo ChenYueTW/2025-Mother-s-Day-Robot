@@ -19,7 +19,6 @@ import frc.robot.subsystems.CarriageSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FunnelSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
-import frc.robot.subsystems.RebuildVisionSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -33,8 +32,7 @@ public class RobotContainer {
 	public final CarriageLifterSubsystem carriageLifterSubsystem = new CarriageLifterSubsystem();
 	public final FunnelSubsystem funnelSubsystem = new FunnelSubsystem();
 	public final LEDSubsystem ledSubsystem = new LEDSubsystem();
-	private final RebuildVisionSubsystem rebuildVisionSubsystem = new RebuildVisionSubsystem(this.swerveSubsystem::addVisionMeasurement);
-	public final VisionSubsystem visionSubsystem = new VisionSubsystem(this.swerveSubsystem::getGyroAngle);
+	public final VisionSubsystem visionSubsystem = new VisionSubsystem(this.swerveSubsystem::addVisionMeasurement);
 
 	// Mode
 	public static boolean pushingCoral = false;
@@ -44,7 +42,7 @@ public class RobotContainer {
 		this.swerveSubsystem.setDefaultCommand(new SwerveDriveCmd(
 			this.swerveSubsystem, this.visionSubsystem,
 			driver::getXDesiredSpeed, driver::getYDesiredSpeed, driver::getRotationSpeed,
-			driver::robotMode, driver::trackLeftTag, driver::trackRightTag, driver::getAButton));
+			driver::robotMode, driver::trackLeftTag, driver::trackRightTag));
 		this.elevatorSubsystem.setDefaultCommand(new ElevatorCmd(
 			this.elevatorSubsystem, this.controller::lifterElevator));
 		this.carriageLifterSubsystem.setDefaultCommand(new CarriageLifterCmd(

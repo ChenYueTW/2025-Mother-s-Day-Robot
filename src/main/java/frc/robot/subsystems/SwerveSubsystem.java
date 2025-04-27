@@ -17,24 +17,20 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.SwerveConstants;
 import frc.robot.lib.helpers.IDashboardProvider;
 import frc.robot.lib.math.MathHelper;
@@ -59,10 +55,8 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     private final PIDController autoDrivePid = new PIDController(0.8, 0.0, 0.0);
 
     // Publishers for simulating and tracking swerve drive poses and module states
-    private final StructArrayPublisher<SwerveModuleState> moduleSim = NetworkTableInstance.getDefault()
-        .getStructArrayTopic("AdvantageScope/SwerveModule", SwerveModuleState.struct).publish();
-    private final StructPublisher<Pose2d> swerveNow = NetworkTableInstance.getDefault()
-        .getStructTopic("AdvantageScope/RealSwervePose", Pose2d.struct).publish();
+    private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
+        .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
 
     /**
      * Initializes the SwerveSubsystem with modules, odometry, and pose estimator,
@@ -155,7 +149,7 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     @Override
     public void periodic() {
         this.field.setRobotPose(this.getPose());
-        this.swerveNow.set(this.getPose());
+        this.swervePose.set(this.getPose());
         this.poseEstimator.update(this.getRotation(), this.getModulePosition());
     }
 
@@ -390,6 +384,7 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     @Override
     public void putDashboard() {
         SmartDashboard.putString("SwervePose", this.getPose().toString());
+        SmartDashboard.putString("Estimate Pose", this.poseEstimator.getEstimatedPosition().toString());
         SmartDashboard.putData("Field", this.field);
         SmartDashboard.putBoolean("Gyro Connect", this.isGyroConnected());
         SmartDashboard.putNumber("GyroAngle", this.getGyroAngle());

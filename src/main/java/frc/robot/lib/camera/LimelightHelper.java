@@ -1,4 +1,4 @@
-package frc.robot.lib.helpers;
+package frc.robot.lib.camera;
 
 import java.util.function.Supplier;
 
