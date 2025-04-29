@@ -86,8 +86,8 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
         );
         this.gyro = new AHRS(NavXComType.kUSB1);
         this.field = new Field2d();
-        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
-        var visionStdDevs = VecBuilder.fill(1, 1, 1);
+        var stateStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);
+        var visionStdDevs = VecBuilder.fill(0.4, 0.4, 0.4);
         this.poseEstimator = new SwerveDrivePoseEstimator(
             SwerveConstants.swerveDriveKinematics,
             Rotation2d.fromDegrees(-this.getGyroAngle()),
@@ -284,7 +284,8 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
-        this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+        // this.poseEstimator.resetPosition(this.getRotation(), this.getModulePosition(), visionMeasurement);
+        this.poseEstimator.addVisionMeasurement(new Pose2d(visionMeasurement.getX(), visionMeasurement.getY(), this.getHeading()), timestampSeconds);
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
@@ -325,9 +326,9 @@ public class SwerveSubsystem extends SubsystemBase implements IDashboardProvider
     public Rotation2d getRotation() {
         double angle = this.getGyroAngle();
 
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
-            angle += 180.0;
-        }
+        // if (DriverStation.getAlliance().get() == Alliance.Red) {
+        //     angle += 180.0;
+        // }
 
         return new Rotation2d(Units.degreesToRadians(angle));
     }

@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.math.PoseTransform;
 
 public class PhotonHelper {
@@ -71,6 +72,14 @@ public class PhotonHelper {
         var result = this.camera.getLatestResult();
         if (result == null) return false;
         return result.hasTargets();
+    }
+
+    public int getTagId() {
+        var result = this.camera.getLatestResult();
+        if (result == null) return -1;
+        PhotonTrackedTarget target = result.getBestTarget();
+        if (target == null) return -1;
+        return target.fiducialId;
     }
 
     public Pose2d getFieldToTagPose() {

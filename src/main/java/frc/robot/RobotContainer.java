@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -53,7 +54,7 @@ public class RobotContainer {
 			this.ledSubsystem, this.carriageSubsystem::getIR));
 
 		this.driver.resetGyro().onTrue(
-			Commands.runOnce(this.swerveSubsystem::resetGyro, this.swerveSubsystem));
+			Commands.runOnce(() -> this.swerveSubsystem.resetPose(new Pose2d()), this.swerveSubsystem));
 		this.configButtonStationBindings();
 	}
 

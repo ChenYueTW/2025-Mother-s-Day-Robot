@@ -35,14 +35,14 @@ public class SwerveDriveCmd extends Command {
 
     @Override
     public void execute() {
-        Pose2d pose = this.visionSubsystem.getFieldToTagPose();
+        Pose2d pose = this.visionSubsystem.getAprilTagFieldPoseFromLastUpdate();
 
         if (pose != null &&
             (this.isTrackLeftTag.get() || this.isTrackRightTag.get() &&
             !arrivedAtTag)
         ) {
             Translation2d targetVector = pose.getTranslation().plus(
-                    new Translation2d(0.5, 0.17 * (this.isTrackLeftTag.get() ? -1.0 : 1.0))
+                    new Translation2d(0.54, 0.24 * (this.isTrackLeftTag.get() ? -1.0 : 1.0))
                         .rotateBy(pose.getRotation()));
             Pose2d pose2d = new Pose2d(targetVector, pose.getRotation());
             arrivedAtTag = this.swerveSubsystem.situateRobot(pose2d);

@@ -8,13 +8,14 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PoseTransform {
     private final Vector3D xAxis;
     private final Vector3D yAxis;
     private final Vector3D robotToCamera;
     @SuppressWarnings("deprecation")
-    private final Plane aprilTagPlane = new Plane(new Vector3D(0.0, 0.0, 0.311), new Vector3D(0.0, 0.0, 1.0));
+    private final Plane aprilTagPlane = new Plane(new Vector3D(0.0, 0.0, 0.301), new Vector3D(0.0, 0.0, 1.0));
 
     public PoseTransform(Vector3D robotToCamera) {
         this.robotToCamera = robotToCamera;
@@ -25,10 +26,11 @@ public class PoseTransform {
     @SuppressWarnings("deprecation")
     public Translation3d getTransform(Transform3d cameraToTag, double pitch, double yaw) {
         Vector3D tagVec = new Vector3D(cameraToTag.getX(), cameraToTag.getY(), cameraToTag.getZ());
-        Rotation3d tagRot = cameraToTag.getRotation();
-        double tagRotate = tagRot.getZ();
+        // Rotation3d tagRot = cameraToTag.getRotation();
+        // double tagRotate = tagRot.getZ();
+        
 
-        Rotation xRot = new Rotation(this.yAxis, yaw + tagRotate, RotationConvention.VECTOR_OPERATOR);
+        Rotation xRot = new Rotation(this.yAxis, yaw, RotationConvention.VECTOR_OPERATOR);
         Rotation yRot = new Rotation(this.xAxis, pitch, RotationConvention.VECTOR_OPERATOR);
         Vector3D xVector = xRot.applyTo(tagVec);
         Vector3D yVector = yRot.applyTo(tagVec);
