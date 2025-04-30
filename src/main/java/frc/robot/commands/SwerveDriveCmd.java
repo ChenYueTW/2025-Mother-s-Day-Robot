@@ -42,7 +42,7 @@ public class SwerveDriveCmd extends Command {
             !arrivedAtTag)
         ) {
             Translation2d targetVector = pose.getTranslation().plus(
-                    new Translation2d(0.54, 0.24 * (this.isTrackLeftTag.get() ? -1.0 : 1.0))
+                    new Translation2d(0.54, 0.14 * (this.isTrackLeftTag.get() ? -1.0 : 1.0))
                         .rotateBy(pose.getRotation()));
             Pose2d pose2d = new Pose2d(targetVector, pose.getRotation());
             arrivedAtTag = this.swerveSubsystem.situateRobot(pose2d);

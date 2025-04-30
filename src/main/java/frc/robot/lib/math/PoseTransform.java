@@ -15,7 +15,9 @@ public class PoseTransform {
     private final Vector3D yAxis;
     private final Vector3D robotToCamera;
     @SuppressWarnings("deprecation")
-    private final Plane aprilTagPlane = new Plane(new Vector3D(0.0, 0.0, 0.301), new Vector3D(0.0, 0.0, 1.0));
+    private final Plane leftPlane = new Plane(new Vector3D(0.0, 0.0, 0.301), new Vector3D(0.0, 0.0, 1.0));
+    @SuppressWarnings("deprecation")
+    private final Plane rightPlane = new Plane(new Vector3D(0.0, 0.0, 0.306), new Vector3D(0.0, 0.0, 1.0));
 
     public PoseTransform(Vector3D robotToCamera) {
         this.robotToCamera = robotToCamera;
@@ -24,7 +26,7 @@ public class PoseTransform {
     }
 
     @SuppressWarnings("deprecation")
-    public Translation3d getTransform(Transform3d cameraToTag, double pitch, double yaw) {
+    public Translation3d getTransform(Transform3d cameraToTag, double pitch, double yaw, int id) {
         Vector3D tagVec = new Vector3D(cameraToTag.getX(), cameraToTag.getY(), cameraToTag.getZ());
         // Rotation3d tagRot = cameraToTag.getRotation();
         // double tagRotate = tagRot.getZ();
@@ -37,7 +39,7 @@ public class PoseTransform {
 
         Plane xPlane = new Plane(this.robotToCamera, this.robotToCamera.add(xVector), this.robotToCamera.add(this.yAxis));
         Plane yPlane = new Plane(this.robotToCamera, this.robotToCamera.add(yVector), this.robotToCamera.add(this.xAxis));
-        Vector3D intersect = Plane.intersection(xPlane, yPlane, aprilTagPlane);
+        Vector3D intersect = Plane.intersection(xPlane, yPlane, id == 18 ? leftPlane : rightPlane);
 
         return new Translation3d(intersect.getX(), intersect.getY(), intersect.getZ());
     }

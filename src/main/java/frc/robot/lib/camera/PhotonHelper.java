@@ -42,7 +42,7 @@ public class PhotonHelper {
 
         this.tagId = target.fiducialId;
         Transform3d cameraToTag = target.getBestCameraToTarget();
-        return this.poseTransform.getTransform(cameraToTag, this.PITCH, this.YAW);
+        return this.poseTransform.getTransform(cameraToTag, this.PITCH, this.YAW, this.tagId);
     }
 
     public Pose2d getRobotToTagPose() {

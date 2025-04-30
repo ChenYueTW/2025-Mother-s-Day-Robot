@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -52,7 +53,7 @@ public class VisionSubsystem extends SubsystemBase {
     public Pose2d getAprilTagFieldPoseFromLastUpdate() {
         Pose2d pose = this.getFieldToTagPose();
         if (pose != null) return pose;
-        if (lastId >= 0) return new Pose2d(AprilTagPose.getTranslation3d(lastId).toTranslation2d(), AprilTagPose.getRotation2d(lastId));
+        if (lastId >= 0) return new Pose2d(AprilTagPose.getTranslation3d(lastId).toTranslation2d(), new Rotation2d(Math.PI));
         return null;
     }
 
