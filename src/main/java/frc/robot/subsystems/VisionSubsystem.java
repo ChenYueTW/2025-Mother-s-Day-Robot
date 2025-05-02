@@ -53,7 +53,7 @@ public class VisionSubsystem extends SubsystemBase {
     public Pose2d getAprilTagFieldPoseFromLastUpdate() {
         Pose2d pose = this.getFieldToTagPose();
         if (pose != null) return pose;
-        if (lastId >= 0) return new Pose2d(AprilTagPose.getTranslation3d(lastId).toTranslation2d(), new Rotation2d(Math.PI));
+        if (lastId >= 0) return new Pose2d(AprilTagPose.getTranslation3d(lastId).toTranslation2d(), AprilTagPose.getRotation2d(lastId));
         return null;
     }
 
